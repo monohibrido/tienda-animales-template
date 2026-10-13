@@ -38,7 +38,19 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-paper/10 py-4 text-center text-xs text-paper/40">
-        © {year} {STORE_CONFIG.nombre}. Todos los derechos reservados.
+        <p>
+          © {year} {STORE_CONFIG.nombre}. Todos los derechos reservados.
+        </p>
+        <p className="mt-1.5">
+          <a
+            href={STORE_CONFIG.creditoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition hover:text-mustard"
+          >
+            {STORE_CONFIG.creditoTexto}
+          </a>
+        </p>
       </div>
     </footer>
   )

@@ -52,12 +52,16 @@ export default function Contacto() {
     }
   }
 
+  const { busqueda, embedUrl } = STORE_CONFIG.mapa
+  const mapaSrc = embedUrl || `https://www.google.com/maps?q=${encodeURIComponent(busqueda)}&output=embed`
+  const mapaLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(busqueda)}`
+
   const bloqueado = segundosRestantes > 0
   const minutos = Math.floor(segundosRestantes / 60)
   const segundos = String(segundosRestantes % 60).padStart(2, '0')
 
   return (
-    <section className="mx-auto max-w-2xl px-4 py-16">
+    <section className="mx-auto max-w-6xl px-4 py-16">
       <h1 className="font-display text-3xl font-semibold text-brand">Contacto</h1>
       <p className="mt-2 text-ink/60">
         Escríbenos y te responderemos a la brevedad a través de este mismo correo.
@@ -66,7 +70,9 @@ export default function Contacto() {
         Por seguridad, solo se permite un mensaje cada 3 minutos.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
+      <div className="mt-8 grid gap-10 md:grid-cols-2 md:items-start">
+      <div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Asunto fijo del correo que le llega al dueño de la tienda */}
         <input type="hidden" name="_subject" value={`Nuevo mensaje de contacto — ${STORE_CONFIG.nombre}`} />
         {/* Campo trampa para bots (Formspree lo ignora si viene vacío) */}
@@ -147,6 +153,34 @@ export default function Contacto() {
           {STORE_CONFIG.emailContacto}
         </a>
       </p>
+      </div>
+
+      {/* Mapa al costado del formulario (debajo en celular) */}
+      <div className="flex flex-col gap-3 md:sticky md:top-24">
+        <div className="overflow-hidden rounded-lg border border-ink/10 bg-white">
+          <iframe
+            title={`Mapa de ${STORE_CONFIG.nombre}`}
+            src={mapaSrc}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+            className="block h-80 w-full md:h-[460px]"
+          />
+        </div>
+        <div className="text-sm text-ink/60">
+          <p className="font-medium text-ink/80">{STORE_CONFIG.direccion}</p>
+          <p>{STORE_CONFIG.horario}</p>
+          <a
+            href={mapaLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-block font-medium text-brand underline"
+          >
+            Abrir en Google Maps
+          </a>
+        </div>
+      </div>
+      </div>
     </section>
   )
 }

@@ -1,97 +1,62 @@
 import { useState } from 'react'
-import { STORE_CONFIG } from '../config.js'
-import ImageLightbox from './ImageLightbox.jsx'
+import { Link } from 'react-router-dom'
+import { precio } from '../utils/format.js'
+import { precioDesde, tienePreciosVariables } from '../data/productos.js'
 
-const formatoCLP = new Intl.NumberFormat('es-CL', {
-  style: 'currency',
-  currency: 'CLP',
-})
-
-export default function ProductCard({ producto }) {
-  const [indice, setIndice] = useState(0)
-  const [lightboxAbierto, setLightboxAbierto] = useState(false)
-  const imagenes = producto.imagenes
-  const tieneVarias = imagenes.length > 1
-
-  const mensaje = `Hola, me interesa el producto: ${producto.nombre}`
-  const url = `https://wa.me/${STORE_CONFIG.whatsapp}?text=${encodeURIComponent(mensaje)}`
-
-  function anterior(e) {
-    e.stopPropagation()
-    setIndice((indice - 1 + imagenes.length) % imagenes.length)
-  }
-
-  function siguiente(e) {
-    e.stopPropagation()
-    setIndice((indice + 1) % imagenes.length)
-  }
+// Tarjeta de la tienda: foto grande, nombre y precio. Al pasar el mouse
+// aparece la segunda foto (si existe). Todo el bloque lleva a la página del producto.
+export default function ProductCard({ producto, prioridad = false }) {
+  const [cargada, setCargada] = useState(false)
+  const [hover, setHover] = useState(false)
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-sm border border-ink/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      {/* Imagen sin recortar: se muestra tal cual, centrada dentro de la caja */}
-      <div
-        className="group relative flex h-56 w-full cursor-zoom-in items-center justify-center bg-paper"
-        onClick={() => setLightboxAbierto(true)}
-      >
+    <Link
+      to={`/tienda/producto/${producto.slug}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="group block"
+    >
+      <div className="relative aspect-square overflow-hidden rounded-md border border-ink/10 bg-white transition group-hover:border-ink/25">
         <img
-          src={imagenes[indice]}
+          ref={(el) => {
+            if (el && el.complete && el.naturalWidth > 0) setCargada(true)
+          }}
+          src={producto.imagenes[0]}
           alt={producto.nombre}
-          className="max-h-full max-w-full object-contain"
-          loading="lazy"
+          loading={prioridad ? 'eager' : 'lazy'}
           decoding="async"
+          width="800"
+          height="800"
+          onLoad={() => setCargada(true)}
+          className={`absolute inset-0 h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.03] ${
+            cargada ? 'opacity-100' : 'opacity-0'
+          }`}
         />
 
-        {tieneVarias && (
-          <>
-            <button
-              onClick={anterior}
-              aria-label="Foto anterior"
-              className="absolute left-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-sm text-ink opacity-0 shadow transition group-hover:opacity-100"
-            >
-              ‹
-            </button>
-            <button
-              onClick={siguiente}
-              aria-label="Foto siguiente"
-              className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-sm text-ink opacity-0 shadow transition group-hover:opacity-100"
-            >
-              ›
-            </button>
-            <div className="absolute bottom-2 flex gap-1">
-              {imagenes.map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-1.5 w-1.5 rounded-full ${i === indice ? 'bg-brand' : 'bg-ink/20'}`}
-                />
-              ))}
-            </div>
-          </>
+        {/* La segunda foto solo se descarga cuando el usuario pasa el mouse */}
+        {hover && producto.imagenes[1] && (
+          <img
+            src={producto.imagenes[1]}
+            alt=""
+            decoding="async"
+            className="animate-aparecer absolute inset-0 h-full w-full bg-white object-contain p-3"
+          />
         )}
+
+        <span className="absolute left-3 top-3 rounded-full bg-paper/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-ink/60">
+          {producto.subcategoria || producto.categoria}
+        </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 border-t border-dashed border-ink/15 bg-white p-4">
-        <h3 className="font-display font-semibold text-ink">{producto.nombre}</h3>
-        <p className="flex-1 text-sm text-ink/60">{producto.descripcion}</p>
-        <p className="font-mono font-semibold text-brand">{formatoCLP.format(producto.precio)}</p>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 rounded-full bg-whats px-4 py-2 text-center text-sm font-semibold text-white transition hover:brightness-105"
-        >
-          Pedir por WhatsApp
-        </a>
+      <div className="mt-3 px-0.5">
+        <h3 className="font-display text-[13px] font-semibold leading-snug text-ink group-hover:text-brand">
+          {producto.nombre}
+        </h3>
+        <p className="mt-1 font-mono text-sm text-ink/70">
+          {tienePreciosVariables(producto) && <span className="mr-1 text-[11px] uppercase text-ink/45">Desde</span>}
+          {precio(precioDesde(producto))}
+        </p>
       </div>
-
-      {lightboxAbierto && (
-        <ImageLightbox
-          producto={producto}
-          indiceActual={indice}
-          onCambiarIndice={setIndice}
-          onClose={() => setLightboxAbierto(false)}
-        />
-      )}
-    </div>
+    </Link>
   )
 }
-
