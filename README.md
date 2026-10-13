@@ -1,8 +1,10 @@
-# Plantilla de Tienda (React + Vite + Tailwind)
+# Plantilla Tienda de Animales (React + Vite + Tailwind)
 
-Plantilla de sitio vitrina (sin ecommerce) con 4 secciones: Home, Catálogo,
-Quiénes somos y Contacto. Pedidos vía botón de WhatsApp. Formulario de
-contacto envía correo al dueño de la tienda.
+Tienda online para mascotas con 4 secciones: Home, Tienda, Quiénes somos y
+Contacto. Incluye **carrito de compras** (drawer lateral con contador en el
+navbar, cantidades y total) que envía el pedido completo por WhatsApp, y una
+página de detalle por producto en `/tienda/producto/<slug>` con opciones
+(peso, sabor, tamaño…). Formulario de contacto envía correo al dueño.
 
 ## 1. Instalación local
 
@@ -23,15 +25,26 @@ Edita **un solo archivo**: `src/config.js`
 - `formEndpoint` (ver paso 3)
 - `direccion`, `horario`, redes sociales
 
-Los productos del catálogo están en `src/data/productos.js` — reemplázalos
-por los productos reales (nombre, precio, categoría, subcategoría,
-imágenes, descripción). El campo `imagenes` es un **arreglo**: si pones
-más de una foto, la card muestra flechitas para pasar entre ellas y, al
-hacer clic, se abre un visor ampliado (tope 500x500px) con navegación por
-teclado, descripción completa y el botón de WhatsApp incluido.
+El mensaje del carrito (`mensajeCarrito`), la cantidad de productos
+relacionados y las líneas de información de cada producto
+(`informacionProducto`) también se editan en `src/config.js`.
+
+Los productos están en `src/data/productos.js` — reemplázalos por los
+productos reales (nombre, precio, categoría, subcategoría, imágenes,
+descripción, opciones). El archivo trae la explicación de cada campo.
+
+- `slug` (opcional): la URL del producto, ej. `/tienda/producto/comida-de-perro`.
+  Si se omite se genera solo desde el nombre.
+- `imagenes`: arreglo de fotos. La primera se ve en la tienda, la segunda
+  aparece al pasar el mouse y todas se ven en la página del producto.
+- `opciones` (opcional): lo que el cliente elige antes de agregar al carrito,
+  ej. `{ nombre: 'Peso', valores: [{ valor: '3 kg', precio: 14990 }, ...] }`.
+  Si un valor trae `precio`, reemplaza al precio base. Un producto sin
+  `opciones` se agrega al carrito directo.
 
 Los campos `categoria` y `subcategoria` (texto libre, ej. `'Perros'` →
-`'Alimento'`) arman solos el menú de dos niveles de arriba del catálogo —
+`'Alimento'`) arman solos el menú de dos niveles de arriba de la tienda (el filtro queda
+en la URL, ej. `/tienda?categoria=Perros&sub=Juguetes`) —
 no hay que declarar el árbol de categorías en ningún otro archivo, se
 arma automáticamente a partir de los productos. Si eliges una categoría
 que no tiene subcategorías cargadas, el segundo menú simplemente no
@@ -71,7 +84,7 @@ usuario de GitHub como colaborador del repo.
 3. Vercel detecta automáticamente que es un proyecto Vite (build command
    `vite build`, output `dist`). No requiere configuración extra.
 4. El archivo `vercel.json` ya incluido hace que las rutas de React Router
-   (`/catalogo`, `/contacto`, etc.) funcionen al recargar o compartir el link
+   (`/tienda`, `/tienda/producto/...`, `/contacto`, etc.) funcionen al recargar o compartir el link
    directo — sin este archivo, esas rutas darían error 404 en producción.
 5. Deploy.
 5. El cliente te invita como miembro del proyecto/equipo en Vercel
@@ -89,8 +102,8 @@ usuario de GitHub como colaborador del repo.
 
 ## Stack
 
-- React 18 + Vite
-- React Router (navegación entre secciones)
+- React 19 + Vite 6
+- React Router 7 (navegación entre secciones)
 - Tailwind CSS (estilos)
 - Formspree/Web3Forms (envío de formulario sin backend propio)
 
@@ -98,9 +111,27 @@ usuario de GitHub como colaborador del repo.
 
 ```
 src/
-├── components/     Navbar, Footer, WhatsAppButton, ProductCard
-├── pages/          Home, Catalogo, QuienesSomos, Contacto
+├── components/     Navbar, Footer, WhatsAppButton, ProductCard, CategoryFilter, CartDrawer
+├── context/        CartContext (carrito guardado en localStorage)
+├── pages/          Home (banner + productos del mes), Tienda, ProductoPage, QuienesSomos, Contacto
 ├── data/           productos.js (catálogo de ejemplo)
+├── utils/          format.js (precios en CLP)
 ├── config.js       ← Único archivo a editar por cliente
 └── App.jsx         Rutas
 ```
+
+## Home
+
+El Home muestra un banner de portada y, justo debajo, "Productos del mes":
+`productosDelMes` productos al azar de la tienda (se sortean en cada visita).
+Reemplaza `public/banner.svg` y `public/banner-movil.svg` por tus fotos y ajusta
+`banner.imagen` / `banner.imagenMovil` en `src/config.js` (tamaños recomendados
+dentro de los mismos SVG). El crédito del footer se edita con `creditoTexto` y
+`creditoUrl` en `src/config.js`.
+
+## Mapa en Contacto
+
+La página Contacto muestra un mapa de Google Maps al costado del formulario
+(debajo en celular), sin API key. Edita `mapa.busqueda` en `src/config.js` (por
+defecto, Metro Ciudad del Niño, San Miguel). Si quieres un pin exacto, pega en
+`mapa.embedUrl` la URL de "Compartir → Insertar un mapa" de Google Maps.

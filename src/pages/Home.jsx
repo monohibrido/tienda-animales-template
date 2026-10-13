@@ -1,63 +1,68 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { STORE_CONFIG } from '../config.js'
+import { PRODUCTOS } from '../data/productos.js'
+import ProductCard from '../components/ProductCard.jsx'
+
+// Mezcla Fisher-Yates (no muta el arreglo original)
+function mezclar(lista) {
+  const copia = [...lista]
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copia[i], copia[j]] = [copia[j], copia[i]]
+  }
+  return copia
+}
 
 export default function Home() {
+  const { banner, productosDelMes } = STORE_CONFIG
+
+  // Productos aleatorios: se sortean una vez cada vez que se entra al Home
+  const destacados = useMemo(() => mezclar(PRODUCTOS).slice(0, productosDelMes), [productosDelMes])
+
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-brand text-paper">
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 md:grid-cols-2 md:items-center md:py-28">
-          <div>
-            <span className="inline-block rounded-full border border-mustard/40 px-3 py-1 font-mono text-xs uppercase tracking-widest text-mustard">
-              Pedidos por WhatsApp
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
-              {STORE_CONFIG.nombre}
-            </h1>
-            <p className="mt-4 max-w-md text-lg text-paper/80">{STORE_CONFIG.eslogan}</p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                to="/catalogo"
-                className="rounded-full bg-mustard px-6 py-3 text-sm font-semibold text-brand-dark transition hover:brightness-105"
-              >
-                Ver catálogo
-              </Link>
-              <Link
-                to="/contacto"
-                className="rounded-full border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:bg-paper/10"
-              >
-                Contáctanos
-              </Link>
-            </div>
-          </div>
+      {/* Banner de portada. Mantiene la proporción de la imagen para que la foto no se recorte. */}
+      <section className="w-full overflow-hidden bg-brand">
+        <h1 className="sr-only">{STORE_CONFIG.nombre}</h1>
+        <picture>
+          {banner.imagenMovil && <source media="(max-width: 767px)" srcSet={banner.imagenMovil} />}
+          <img
+            src={banner.imagen}
+            alt={banner.alt}
+            fetchPriority="high"
+            className="aspect-[8/9] w-full object-cover md:aspect-[8/3]"
+          />
+        </picture>
+      </section>
 
-          {/* Elemento visual propio: mock de "boleta" de pedido */}
-          <div className="hidden justify-self-end md:block">
-            <div className="w-72 -rotate-2 rounded-sm bg-paper p-6 text-ink shadow-2xl">
-              <p className="font-mono text-xs uppercase tracking-widest text-ink/50">Pedido #001</p>
-              <div className="mt-4 space-y-2 border-b border-dashed border-ink/20 pb-4">
-                <div className="flex justify-between text-sm">
-                  <span>Producto 1</span>
-                  <span className="font-mono">$9.990</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Producto 2</span>
-                  <span className="font-mono">$14.990</span>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm font-semibold">Enviar por</span>
-                <span className="flex items-center gap-1.5 rounded-full bg-whats/10 px-2.5 py-1 text-xs font-semibold text-whats">
-                  WhatsApp
-                </span>
-              </div>
-            </div>
-          </div>
+      {/* Productos del mes */}
+      <section className="mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16">
+        <div className="text-center">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-mustard">Selección</span>
+          <h2 className="mt-1 font-display text-2xl font-semibold uppercase tracking-[0.2em] text-brand md:text-3xl">
+            Productos del mes
+          </h2>
+        </div>
+
+        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 lg:grid-cols-5">
+          {destacados.map((producto, i) => (
+            <ProductCard key={producto.id} producto={producto} prioridad={i < 5} />
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            to="/tienda"
+            className="inline-block rounded-full bg-brand px-8 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-paper transition hover:bg-brand-dark"
+          >
+            Ver toda la tienda
+          </Link>
         </div>
       </section>
 
-      {/* Destacados / por qué elegirnos */}
-      <section className="mx-auto max-w-6xl px-4 py-16">
+      {/* ¿Por qué elegirnos? */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="text-center font-display text-2xl font-semibold text-brand">¿Por qué elegirnos?</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {[
@@ -66,7 +71,7 @@ export default function Home() {
             { title: 'Rapidez', desc: 'Respondemos y coordinamos pedidos al instante.' },
           ].map((item, i) => (
             <div key={item.title} className="rounded-sm border border-ink/10 bg-white/60 p-6">
-              <span className="font-mono text-xs text-mustard">0{i + 1}</span>
+              
               <h3 className="mt-2 font-display font-semibold text-brand">{item.title}</h3>
               <p className="mt-2 text-sm text-ink/60">{item.desc}</p>
             </div>

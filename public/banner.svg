@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 750" width="2000" height="750" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F3D2E"/>
+      <stop offset="1" stop-color="#132A1F"/>
+    </linearGradient>
+    <g id="pata">
+      <ellipse cx="0" cy="30" rx="46" ry="38"/>
+      <ellipse cx="-52" cy="-16" rx="18" ry="24" transform="rotate(-20 -52 -16)"/>
+      <ellipse cx="-18" cy="-44" rx="18" ry="26" transform="rotate(-6 -18 -44)"/>
+      <ellipse cx="18" cy="-44" rx="18" ry="26" transform="rotate(6 18 -44)"/>
+      <ellipse cx="52" cy="-16" rx="18" ry="24" transform="rotate(20 52 -16)"/>
+    </g>
+  </defs>
+  <rect width="2000" height="750" fill="url(#g)"/>
+  <rect x="30" y="30" width="1940" height="690" fill="none" stroke="#F1EEE3" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="16 12"/>
+
+  <g fill="#D9A441" fill-opacity="0.14">
+    <use href="#pata" transform="translate(220 560) rotate(-18) scale(2.2)"/>
+    <use href="#pata" transform="translate(1780 200) rotate(16) scale(2.6)"/>
+    <use href="#pata" transform="translate(1500 600) rotate(8) scale(1.4)"/>
+    <use href="#pata" transform="translate(470 170) rotate(24) scale(1.2)"/>
+  </g>
+
+  <g font-family="Helvetica, Arial, sans-serif" fill="#F1EEE3" text-anchor="middle">
+    <text x="1000" y="250" font-size="26" letter-spacing="10" opacity="0.8">FOTO DE PORTADA · ESCRITORIO</text>
+    <text x="1000" y="370" font-size="110" font-weight="300" letter-spacing="2">2000 × 750 px</text>
+    <text x="1000" y="435" font-size="32" letter-spacing="6" opacity="0.85">HORIZONTAL 8:3</text>
+    <text x="1000" y="500" font-size="24" opacity="0.75">Formato jpg o webp · ideal menos de 300 KB</text>
+    <text x="1000" y="540" font-size="24" opacity="0.75">Guarda la foto en /public y ajusta banner.imagen en src/config.js</text>
+    <text x="1000" y="600" font-size="22" opacity="0.7">En celular se usa otra imagen: banner-movil (vertical 800 × 900)</text>
+  </g>
+</svg>
