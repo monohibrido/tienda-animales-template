@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { STORE_CONFIG } from '../config.js'
 import { useCart } from '../context/CartContext.jsx'
 import ProductCard from '../components/ProductCard.jsx'
+import Reveal from '../components/Reveal.jsx'
 import { PRODUCTOS, buscarProducto, precioConOpciones, precioDesde, tienePreciosVariables } from '../data/productos.js'
 import { precio } from '../utils/format.js'
 
@@ -98,6 +99,7 @@ function DetalleProducto({ producto }) {
 
         <div className="grid gap-8 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-14">
           {/* ---------- Izquierda: galería ---------- */}
+          <Reveal>
           <div className="flex flex-col-reverse gap-3 md:flex-row">
             {producto.imagenes.length > 1 && (
               <div className="flex gap-2 md:flex-col">
@@ -128,9 +130,11 @@ function DetalleProducto({ producto }) {
               />
             </div>
           </div>
+          </Reveal>
 
           {/* ---------- Derecha: información y compra ---------- */}
           <div className="self-start md:sticky md:top-24">
+            <Reveal delay={120}>
             <div className="rounded-lg border border-ink/10 bg-white p-6 md:p-8">
               <span className="font-mono text-[10px] uppercase tracking-widest text-mustard">
                 {producto.categoria}
@@ -235,6 +239,7 @@ function DetalleProducto({ producto }) {
                 ))}
               </ul>
             </div>
+            </Reveal>
           </div>
         </div>
       </div>
@@ -242,12 +247,16 @@ function DetalleProducto({ producto }) {
       {/* ---------- Productos relacionados ---------- */}
       {relacionados.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-14 pt-4 md:px-8">
-          <h2 className="pb-6 text-center text-[11px] font-semibold uppercase tracking-[0.3em]">
-            Productos relacionados
-          </h2>
+          <Reveal>
+            <h2 className="pb-6 text-center text-[11px] font-semibold uppercase tracking-[0.3em]">
+              Productos relacionados
+            </h2>
+          </Reveal>
           <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4 md:gap-x-6">
-            {relacionados.map((p) => (
-              <ProductCard key={p.id} producto={p} />
+            {relacionados.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 4) * 80} className="h-full">
+                <ProductCard producto={p} />
+              </Reveal>
             ))}
           </div>
         </section>

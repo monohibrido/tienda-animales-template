@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { STORE_CONFIG } from '../config.js'
+import Reveal from '../components/Reveal.jsx'
 
 const initialState = { nombre: '', email: '', mensaje: '' }
 const COOLDOWN_MS = 3 * 60 * 1000 // 3 minutos
@@ -62,15 +63,18 @@ export default function Contacto() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
-      <h1 className="font-display text-3xl font-semibold text-brand">Contacto</h1>
-      <p className="mt-2 text-ink/60">
-        Escríbenos y te responderemos a la brevedad a través de este mismo correo.
-      </p>
-      <p className="mt-1 text-xs text-ink/40">
-        Por seguridad, solo se permite un mensaje cada 3 minutos.
-      </p>
+      <Reveal>
+        <h1 className="font-display text-3xl font-semibold text-brand">Contacto</h1>
+        <p className="mt-2 text-ink/60">
+          Escríbenos y te responderemos a la brevedad a través de este mismo correo.
+        </p>
+        <p className="mt-1 text-xs text-ink/40">
+          Por seguridad, solo se permite un mensaje cada 3 minutos.
+        </p>
+      </Reveal>
 
       <div className="mt-8 grid gap-10 md:grid-cols-2 md:items-start">
+      <Reveal delay={100}>
       <div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Asunto fijo del correo que le llega al dueño de la tienda */}
@@ -154,9 +158,12 @@ export default function Contacto() {
         </a>
       </p>
       </div>
+      </Reveal>
 
       {/* Mapa al costado del formulario (debajo en celular) */}
-      <div className="flex flex-col gap-3 md:sticky md:top-24">
+      <div className="md:sticky md:top-24">
+      <Reveal delay={200}>
+      <div className="flex flex-col gap-3">
         <div className="overflow-hidden rounded-lg border border-ink/10 bg-white">
           <iframe
             title={`Mapa de ${STORE_CONFIG.nombre}`}
@@ -179,6 +186,8 @@ export default function Contacto() {
             Abrir en Google Maps
           </a>
         </div>
+      </div>
+      </Reveal>
       </div>
       </div>
     </section>
